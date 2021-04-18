@@ -2,3 +2,4 @@
 
     branch: master
     commit: HEAD
+    path: week1
