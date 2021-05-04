@@ -1,5 +1,3 @@
-第一周作业:
+第二周作业: week2
 
-    branch: master
-    commit: HEAD
-    path: week1
+第一周作业: week1
