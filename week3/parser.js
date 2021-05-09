@@ -229,7 +229,7 @@ function tagOpen(c) {
         return tagName(c);
     } else {
         e('text', c);
-        return;//.
+        return;
     }
 }
 
@@ -240,11 +240,8 @@ function endTagOpen(c) {
         // 若遇到字母, 则开始解析 tag 名, 且将当前 c 再处理一遍
         return tagName(c);
     } else if (c === '>') {
-        //.
     } else if (c == EOF) {
-        //.return;
     } else {
-        //.
     }
 }
 
@@ -257,7 +254,7 @@ function tagName(c) {
         // tag name 后出现 /, 说明是自封闭标签
         return selfClosingStartTag;
     } else if (c.match(letterRegex)) {
-        currentToken.tagName += c;//.toLowerCase()
+        currentToken.tagName += c;
         // 继续 tagName
         return tagName;
     } else if (c === '>') {
@@ -276,8 +273,6 @@ function beforeAttributeName(c) {
         // 没等到属性名, 继续等
         return beforeAttributeName;
     } else if (c === '/' || c === '>' || c == EOF) {
-        //.// tag name 后出现 /, 说明是自封闭标签
-        //.return selfClosingStartTag;
         return afterAttributeName(c);
     } else if (c === '=') {
 
@@ -357,7 +352,7 @@ function afterQuotedAttributeValue(c) {
         emit(currentToken);
         return data;
     } else if (c == EOF) {
-        return;//.
+        return;
     } else {
         // 下边这句显然有问题
         currentAttribute.value += c;
@@ -382,7 +377,7 @@ function unquotedAttributeValue(c) {
     } else if (c === '"' || c === '\'' || c === '<' || c === '=' || c === '`') {
 
     } else if (c == EOF) {
-        return;//.
+        return;
     } else {
         // 正常处理 value
         currentAttribute.value += c;
@@ -397,9 +392,7 @@ function selfClosingStartTag(c) {
         emit(currentToken);
         return data;
     } else if (c == EOF) {
-        //. ?
     } else {
-        //.
     }
 }
 
