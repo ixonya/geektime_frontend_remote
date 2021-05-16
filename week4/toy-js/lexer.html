@@ -1,44 +1,87 @@
 <pre>
 <script>
 
-    let xregexp = {
+    class XRegExp {
+        constructor(source, flag, root = 'root') {
+            this.table = new Map();
+            this.regexp = new RegExp(this.compileRegExp(source, root, 0).source, flag);
+            console.log(this.table);
+        }
+
+        compileRegExp(source, name, start) {
+            if (source[name] instanceof RegExp) {
+                return {
+                    source: source[name].source,
+                    length: 0,
+                }
+            }
+
+            let length = 0;
+
+            let regexp = source[name].replace(/\<([^>]+)\>/g, ($0, $1) => {
+                this.table.set(start + length, $1);
+                this.table.set($1, start + length);
+
+                ++ length;                
+                let r = this.compileRegExp(source, $1, start + length);
+                length += r.length;
+
+                return '(' + r.source + ')';
+            });
+            return {
+                source: regexp,
+                length: length
+            }
+        }
+
+        exec(string) {
+            let r = this.regexp.exec(string);
+            if (r) {
+                console.log(JSON.stringify(r[0]));
+                let types = [];
+                for (let i = 1 ; i < r.length ; ++i) {
+                    if (r[i] !== void 0) {
+                        r[this.table.get(i - 1)] = r[i];
+                        types.push(this.table.get(i - 1));
+                    }
+                }
+                console.log(types.join(' -> '));
+            }
+            return r;
+        }
+
+        get lastIndex() {
+            return this.regexp.lastIndex;
+        }
+
+        set lastIndex(value) {
+            return this.regexp.lastIndex = value;
+        }
+    }
+
+    let source = {
         InputElement: "<Whitespace>|<LineTerminator>|<Comments>|<Token>",
         Whitespace: / /,
         LineTerminator: /\n/,
         Comments: "<MultiLineComments>|<SingleLineComments>",
-        MultiLineComments: /\/\*([^*]|\*(?!\/))*\*\//,
+        MultiLineComments: /\/\*(?:[^*]|\*(?!\/))*\*\//,
         SingleLineComments: /\/\/[^\n]*/,
         Token: "<Literal>|<Keywords>|<Identifier>|<Punctuator>",
         Literal: "<NumericLiteral>|<BooleanLiteral>|<StringLiteral>|<NullLiteral>",
-        NumericLiteral: /([1-9][0-9]*|0)(\.[0-9]*)?|\.[0-9]+/,
+        NumericLiteral: /(?:[1-9][0-9]*|0)(?:\.[0-9]*)?|\.[0-9]+/,
         BooleanLiteral: /true|false/,
-        StringLiteral: /("([^"\n]|(?<=\\)")*")|'([^'\n]|(?<=\\)')*'/,
+        StringLiteral: /(?:"(?:[^"\n]|(?<=\\)")*")|'(?:[^'\n]|(?<=\\)')*'/,
         NullLiteral: /null/,
         Identifier: /[a-zA-Z_$][a-zA-Z_$0-9]*/,
         Keywords: /if|else|for|function|let|var|const|new|switch|case|break|continue/,
         Punctuator: /==>|===|!==|==|!=|=|\(|\)|\[|\]|\{|\}|<|>|;|\:|,|\?|\.|\+\+|--|\+=|-=|\*=|\/=|\+|-|\*|\/|&&|\|\||!/,
     }
 
-    function compileXRegExp(xregexp, name) {
-        console.log(xregexp + " , " + name);//.
-        if (xregexp[name] instanceof RegExp) {
-            return xregexp[name].source;
-        }
-        let regexp = xregexp[name].replace(/\<([^>]+)\>/g, function($0, $1) {
-            console.log('0: ' + $0 + " , 1: " + $1);
-            return compileXRegExp(xregexp, $1);
-        });
-        console.log('returning: ' + regexp);//.
-        return regexp;
-    }
-
-    let regexp = new RegExp(compileXRegExp(xregexp, 'InputElement'), 'g'); 
-    console.log(regexp);
+    let xregexp = new XRegExp(source, 'g', 'InputElement'); 
 
     function scan(str) {
         let matched;
-        while ((matched = regexp.exec(str)) != null) {
-            console.log(JSON.stringify(matched[0]));
+        while ((matched = xregexp.exec(str)) != null) {
             document.write(matched[0]);
         }
     }
@@ -59,7 +102,9 @@ function emit(token) {
             };
 
             for (let prop in token) {
-                // 这里原文为 ||, 但 || 等同于恒为真
+                /*
+                 * 这里原文为 ||, 但 || 等同于恒为真
+                 */
                 if (prop != 'type' && prop != 'tagName') {
                     element.attributes.push({
                         name: prop,
