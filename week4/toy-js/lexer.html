@@ -12,7 +12,7 @@
         Literal: "<NumericLiteral>|<BooleanLiteral>|<StringLiteral>|<NullLiteral>",
         NumericLiteral: /([1-9][0-9]*|0)(\.[0-9]*)?|\.[0-9]+/,
         BooleanLiteral: /true|false/,
-        StringLiteral: /(\"([^"\n]|(?<=\\)[\s\S])*\")|\'([^'\n]|(?<=\\)[\s\S])*\'/,
+        StringLiteral: /("([^"\n]|(?<=\\)")*")|'([^'\n]|(?<=\\)')*'/,
         NullLiteral: /null/,
         Identifier: /[a-zA-Z_$][a-zA-Z_$0-9]*/,
         Keywords: /if|else|for|function|let|var|const|new|switch|case|break|continue/,
@@ -81,7 +81,7 @@ function emit(token) {
         case 'endTag':
 
             if (top.tagName != token.tagName) {
-                throw new Error('Tag start end doesn\'t match!');
+                throw new Error('Tag start end doesn\\'t match!');
             } else {
                 if (top.tagName === 'style') {
                     // 取出其中文本节点的 content 进行处理
