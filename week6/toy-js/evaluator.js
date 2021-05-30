@@ -149,6 +149,28 @@ export class Evaluator {
             configable: true,
         });
     }
+    LogicalORExpression(node) {
+        if (node.children.length === 1) {
+            return this.evaluate(node.children[0]);
+        }
+        let result = this.evaluate(node.children[0]);
+        if (result) {
+            return result;
+        } else {
+            return this.evaluate(node.children[2]);
+        }
+    }
+    LogicalANDExpression(node) {
+        if (node.children.length === 1) {
+            return this.evaluate(node.children[0]);
+        }
+        let result = this.evaluate(node.children[0]);
+        if (!result) {
+            return result;
+        } else {
+            return this.evaluate(node.children[2]);
+        }
+    }
     AssignmentExpression(node) {
         if (node.children.length === 1) {
             return this.evaluate(node.children[0]);
@@ -156,6 +178,26 @@ export class Evaluator {
         let left = this.evaluate(node.children[0]);
         let right = this.evaluate(node.children[2]);
         left.set(right);
+    }
+    LeftHandSideExpression(node) {
+        return this.evaluate(node.children[0]);
+    }
+    NewExpression(node) {
+        if (node.children.length === 1) {
+            return this.evaluate(node.children[0]);
+        }
+        if (node.children.length === 2) {
+        }
+    }
+    CallExpression(node) {
+        if (node.children.length === 1) {
+            return this.evaluate(node.children[0]);
+        }
+    }
+    MemberExpression(node) {
+        if (node.children.length === 1) {
+            return this.evaluate(node.children[0]);
+        }
     }
     Identifier(node) {
         let runningEC = this.ecs[this.ecs.length - 1];
