@@ -1,0 +1,7 @@
+npm init
+npm install -g webpack@4.44.2 webpack-cli
+npm install -D webpack@4.44.2 babel-loader
+npm install -D @babel/core @babel/preset-env
+npm install -D @babel/plugin-transform-react-jsx
+npm install -D webpack-dev-server                   安装后方便调试
+npm install -D webpack-cli@3                        webpack-dev-server 依赖 webpack-cli
