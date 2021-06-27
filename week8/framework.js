@@ -3,7 +3,7 @@ export function createElement(type, attributes, ...children) {
     if (typeof type === "string") {
         element = new ElementWrapper(type);
     } else {
-        element = new type;
+        element = new type();
     }    
     for (let name in attributes) {
         element.setAttribute(name, attributes[name]);
