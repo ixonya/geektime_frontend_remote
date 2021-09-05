@@ -1,5 +1,3 @@
-//.import {linear} from "./ease.js"
-
 const TICK = Symbol("tick");
 const TICK_HANDLER = Symbol("tick-handler");
 const ANIMATIONS = Symbol("animations");
@@ -57,7 +55,7 @@ export class Timeline {
             return;
         }
         this[STATE] = "started";
-        this[PAUSE_TIME] += Date.now() - this[PAUSE_START]; //. +=
+        this[PAUSE_TIME] += Date.now() - this[PAUSE_START];
         this[TICK]();
     }
     reset() {
